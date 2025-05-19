@@ -12,24 +12,6 @@ Power BI – Business intelligence and interactive dashboards
 📂 Repository Structure
 
 Each tool I study will have its own directory with project files, datasets (where permitted), and documentation.
-.
-├── SQL/
-│   └── [Project Name]/
-│       ├── SQL Queries.sql
-│       └── README.md
-├── Excel/
-│   └── [Project Name]/
-│       ├── Dashboard.xlsx
-│       └── README.md
-├── Tableau/
-│   └── [Project Name]/
-│       ├── Tableau Workbook.twbx
-│       └── README.md
-├── PowerBI/
-│   └── [Project Name]/
-│       ├── Report.pbix
-│       └── README.md
-└── README.md
 
 
 🧠 Skills Being Developed
