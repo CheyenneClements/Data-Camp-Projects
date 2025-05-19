@@ -1,0 +1,237 @@
+Data Set Used: https://www.kaggle.com/datasets/swaptr/layoffs-2022
+
+-- Data Cleaning SQL Project
+
+SELECT*
+FROM layoffs;
+
+-- In this project we will:
+-- 1. Remove Duplicates (if any)
+-- 2. Standardize the Data 
+-- 3. Null Values or Blank Values 
+-- 4. Remove Unnecessary Columns or Rows 
+
+-- Create a staging or raw dataset to begin. We want the staging set so we are not manipulating the original data. 
+
+CREATE TABLE layoffs_staging
+LIKE layoffs;
+
+INSERT layoffs_staging
+SELECT * 
+FROM layoffs;
+
+#If we check we should now have two identical tables, layoffs and layoffs_staging 
+SELECT * 
+FROM layoffs_staging;
+
+-- Remove Duplicates 
+
+#Create a unique row ID with row number 
+
+SELECT * , 
+ROW_NUMBER() OVER(PARTITION BY company,industry, total_laid_off, percentage_laid_off, `date`) AS row_num
+FROM layoffs_staging;
+
+-- CREATE a CTE to filter for unique identifiers
+WITH duplicate_cte AS
+(
+SELECT * , 
+ROW_NUMBER() OVER(PARTITION BY company,industry, total_laid_off, percentage_laid_off, `date`) AS row_num
+FROM layoffs_staging
+)
+SELECT *
+FROM duplicate_cte
+WHERE row_num > 1; # This yielded no unique identifiers meaning no duplicates in the dataset
+
+-- If there were duplicates we would want to find out more about the duplicate companies to ensure they are in fact duplicates. To do this we would 
+SELECT*
+FROM layoffs_staging
+WHERE company = 'Oda'; 
+# Sometimes companies will be close enough that they seem like duplicates but may not be.
+
+# Since they were not the same, we now to partition over every column
+WITH duplicate_cte AS
+(
+SELECT * , 
+ROW_NUMBER() OVER(
+PARTITION BY company, location,
+industry, total_laid_off, percentage_laid_off, `date`, stage
+, country, funds_raised) AS row_num
+FROM layoffs_staging
+)
+SELECT *
+FROM duplicate_cte
+WHERE row_num > 1;  # For this data it did not return anything, meaning there are no duplicates. 
+
+# If we had found duplicates we would want to remove the duplicate row. We don't want to delete both, since one is the duplicate, we just want to remove the duplicate. 
+# Since we cannot update a CTE, we will create another table and delete the duplicates there. 
+
+CREATE TABLE `layoffs_staging2` (
+  `company` text,
+  `location` text,
+  `total_laid_off` double DEFAULT NULL,
+  `date` text,
+  `percentage_laid_off` text,
+  `industry` text,
+  `source` text,
+  `stage` text,
+  `funds_raised` text,
+  `country` text,
+  `date_added` text, 
+  `row_num` INT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci; #this creates our table 
+
+SELECT *
+FROM layoffs_staging2; #at this point the table is empty and will need data imported into it. 
+
+INSERT INTO layoffs_staging2
+SELECT * , 
+ROW_NUMBER() OVER(
+PARTITION BY company, location,
+industry, total_laid_off, percentage_laid_off, `date`, stage
+, country, funds_raised) AS row_num
+FROM layoffs_staging; #the data from layoffs_staging has been added to the new table. We wanted this new table to have the row_num column so we could delete duplicates. Rremember, this dataset currently does not have duplicate values, but we will treat it as if it does. 
+
+# We now want to find those row numbers greater than 1, these are the duplicates 
+SELECT *
+FROM layoffs_staging2
+WHERE row_num > 1;
+
+#We will then want to delete
+DELETE
+FROM layoffs_staging2
+WHERE row_num > 1; #This should delete those duplicates. 
+
+-- Standardizing Data 
+
+# TRIM
+SELECT company, TRIM(company)
+FROM layoffs_staging2;
+
+UPDATE layoffs_staging2
+SET company = TRIM(company);
+
+#Industry 
+SELECT DISTINCT industry
+FROM layoffs_staging2
+ORDER BY 1;
+#If there are iinstances where the industry is not standard, this data currently does not have that issue, it will need to be corrected. 
+
+#Assume Crypto is written multiple ways and not standardized. Our next step is to update Crypto Currency industry to all read Crypto
+SELECT  *
+FROM layoffs_staging2
+WHERE industry LIKE 'Crypto%';
+#Update all to be crypto
+
+UPDATE layoffs_staging2
+SET industry = 'Crypto' 
+WHERE industry LIKE 'Crypto%';
+
+SELECT DISTINCT industry
+FROM layoffs_staging2; 
+#Crypto should now be standardized.
+
+#Location- want to ensure they are standard 
+SELECT DISTINCT location
+FROM layoffs_staging2
+ORDER BY 1;
+
+#Country
+SELECT DISTINCT country
+FROM layoffs_staging2
+ORDER BY 1;
+
+#If we assume there is an issue, say the country had a period at the end that should not be there, we would need to correct. To do that: 
+SELECT DISTINCT country,TRIM(TRAILING '.' FROM country)
+FROM layoffs_staging2
+ORDER BY 1;
+
+UPDATE layoffs_staging2
+SET country = TRIM(TRAILING '.' FROM country)
+WHERE country LIKE 'United States'; 
+
+#Update the 'Date' column from text to date or update the date range 
+SELECT `date`,
+STR_TO_DATE(`date`, '%m/%d/%Y')
+FROM layoffs_staging2;
+
+UPDATE layoffs_staging2
+SET `date` = STR_TO_DATE(`date`, '%m/%d/%Y');
+
+#We want to update data type from text to date
+ALTER TABLE layoffs_staging2
+MODIFY COLUMN `date` DATE;
+
+-- NULL and Blank Values 
+SELECT *
+FROM layoffs_staging2
+WHERE total_laid_off IS NULL
+AND percentage_laid_off IS NULL;
+
+SELECT DISTINCT industry
+FROM layoffs_staging2
+WHERE industry IS NULL
+OR industry = ' ';
+
+#Both came back with no null values, but we need to check anyways. If there were Null's or blanks then we need to correct. 
+
+SELECT *
+FROM layoffs_staging2
+WHERE company = 'Airbnb';
+#We know this is the travel industry. If there are two rows and one has industry while the other does not we can update and have both include the industry. 
+
+SELECT *
+FROM layoffs_staging2 t1
+JOIN layoffs_staging2 t2
+	ON t1.company = t2.company
+    AND t1.location = t2.location
+WHERE (t1.industry IS NULL OR t1.industry = ' ')
+AND t2.industry IS NOT NULL;
+#This should populate industries that are blank or NULL. It compares to the ones that are not NULL so we know how to update each industry. 
+
+UPDATE layoffs_staging2 t1
+JOIN layoffs_staging2 t2
+	ON t1.company = t2.company
+SET t1.company = t2.company
+WHERE (t1.industry IS NULL OR t1.industry = ' ')
+AND t2.industry IS NOT NULL;
+#This should update the industries we found above. However, some are still blank so we must figure out why. 
+
+#We must set the blanks to NULL
+UPDATE layoffs_staging2
+SET industry = NULL
+WHERE industry = ' ';
+
+#Once we do this, we rerun the code and it should fix it. 
+UPDATE layoffs_staging2 t1
+JOIN layoffs_staging2 t2
+	ON t1.company = t2.company
+SET t1.company = t2.company
+WHERE t1.industry IS NULL
+AND t2.industry IS NOT NULL;
+#Most are corrected, however, one is still null. This is because it was the only rule and had no other to update with. 
+
+#There are columns that are still null and blank. We have nothing to update them with so they will need to remain. We have no frame of reference and anything we input could skew the data. 
+
+-- Remove Columns and Rows We Do Not Need
+
+#We are going to remove those rows that contain the percentage and laid off Nulls
+#NOTE: We do not always remove data as it can skew the results, but for this project we will. We don't know if we can trust the data at this moment so we will remove it for a future project. 
+
+DELETE
+FROM layoffs_staging2
+WHERE total_laid_off IS NULL
+AND percentage_laid_off IS NULL;
+
+SELECT *
+FROM layoffs_staging2
+WHERE total_laid_off IS NULL
+AND percentage_laid_off IS NULL; #Ensure they have been removed, and they have. 
+
+SELECT *
+FROM layoffs_staging2;
+
+#We want to drop the row_num column we created for cleaning purposes. 
+
+ALTER TABLE layoffs_staging2
+DROP COLUMN row_num;
