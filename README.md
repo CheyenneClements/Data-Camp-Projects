@@ -12,14 +12,13 @@ Power BI – Business intelligence and interactive dashboards
 📂 Repository Structure
 
 Each tool I study will have its own directory with project files, datasets (where permitted), and documentation.
-
 .
 ├── SQL/
-│   └── [Data Cleaning]
-│       ├── Data Cleaning
+│   └── [Project Name]/
+│       ├── SQL Queries.sql
 │       └── README.md
 ├── Excel/
-│   └── [Project Name Coming]/
+│   └── [Project Name]/
 │       ├── Dashboard.xlsx
 │       └── README.md
 ├── Tableau/
@@ -31,6 +30,7 @@ Each tool I study will have its own directory with project files, datasets (wher
 │       ├── Report.pbix
 │       └── README.md
 └── README.md
+
 
 🧠 Skills Being Developed
 
