@@ -11,7 +11,7 @@ Power BI – Business intelligence and interactive dashboards
 
 📂 Repository Structure
 
-Each tool I study will have its own directory with project files, datasets (where permitted), and documentation.
+Each tool I study will have its own project files, datasets (where permitted), and documentation.
 
 
 🧠 Skills Being Developed
@@ -26,9 +26,13 @@ Data modeling and reporting
 📌 Projects in Progress
 
 ✅ SQL: Data Cleaning and Analysis with Layoffs Dataset
+
 ✅ [Coming Soon] SQL: Exploratory Data Analysis
+
 ✅ [Coming Soon] Excel
+
 ✅ [Coming Soon] Tableau
+
 ✅ [Coming Soon] Power BI
 
 
