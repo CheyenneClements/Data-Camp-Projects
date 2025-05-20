@@ -27,7 +27,7 @@ Data modeling and reporting
 
 ✅ SQL: Data Cleaning and Analysis with Layoffs Dataset
 
-✅ [Coming Soon] SQL: Exploratory Data Analysis
+✅ SQL: Exploratory Data Analysis
 
 ✅ [Coming Soon] Excel
 
