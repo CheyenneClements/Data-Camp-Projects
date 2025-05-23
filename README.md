@@ -29,8 +29,6 @@ Data modeling and reporting
 
 ✅ SQL: Exploratory Data Analysis
 
-✅ [Coming Soon] Excel Data Cleaning
-
 ✅ [Coming Soon] Excel
 
 ✅ [Coming Soon] Tableau
