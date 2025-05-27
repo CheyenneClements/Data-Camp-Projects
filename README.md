@@ -29,7 +29,7 @@ Data modeling and reporting
 
 ✅ SQL: Exploratory Data Analysis
 
-✅ [Coming Soon] Excel
+✅ [Coming Soon] Excel Project with Dashboard & Pivot Tables
 
 ✅ [Coming Soon] Tableau
 
