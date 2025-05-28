@@ -31,7 +31,7 @@ Data modeling and reporting
 
 ✅ Excel Project with Dashboard & Pivot Tables
 
-✅ [Coming Soon] Tableau
+✅ [In Progress] Tableau
 
 ✅ [Coming Soon] Power BI
 
