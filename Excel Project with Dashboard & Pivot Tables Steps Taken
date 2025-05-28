@@ -1,0 +1,19 @@
+Dataset Used from Alex the Analyst : https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqbDIwVEtOdkJ2Q1FQalNCcG5uR3hNZ0I2QWhaZ3xBQ3Jtc0ttNWRTX0Zha1ZMZFRrM01PTUdPSFVjYjV2dlpFbHN4a1lpeU5uNVJuRTZBWVVRNzd5Q3V1cm9PWTEwb2pSamotd1FPOC1OcUFQUnZydjJwTTdKdDV5SGphQURySGQwRFN6OF9OLWhCa0lGOW1XTDlHYw&q=https%3A%2F%2Fgithub.com%2FAlexTheAnalyst%2FExcel-Tutorial%2Fblob%2Fmain%2FExcel%2520Project%2520Dataset.xlsx&v=opJgMj1IUrc
+
+This project focuses on data cleaning, pivot table creation, and dashboard creation. 
+
+When working with the data we created a working sheet to manipulate and clean the data. 
+
+Data cleaning steps taken: 
+  * Check for Duplicates 
+  * Replace M with Married, S with Single 
+  * Replace F with Female, M with Male 
+  * Income changed to currency 
+  * Age brackets were created for later visual representation. Created three age brackets- Adolescent, Middle Age, Old
+
+Pivot Tables Built: 
+  * Average Income & Bikes Purchased 
+  * Commuting Distance 
+  * Age Bracket and Bikes Purchased
+
+Dashboard Built with Pivot Table representations and slicers for ease of filtering. 
