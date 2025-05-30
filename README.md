@@ -31,8 +31,8 @@ Data modeling and reporting
 
 ✅ Excel Project with Dashboard & Pivot Tables
 
-✅ [In Progress] Tableau AirBnB Project
+✅ Tableau AirBnB Project
 
-✅ [Coming Soon] Power BI
+✅ [In Progress] Power BI
 
 
