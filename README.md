@@ -33,6 +33,5 @@ Data modeling and reporting
 
 ✅ Tableau AirBnB Project
 
-✅ [In Progress] Power BI
 
 
